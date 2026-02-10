@@ -27,7 +27,7 @@
         hasMusic: true,
         musicName: "Nossa Música Especial",
         artistName: "Jorge & Mateus",
-        musicUrl: "https://youtube.com/watch?v=dQw4w9WgXcQ",
+        musicUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     };
 
     let isOpen = false;
@@ -52,7 +52,7 @@
                 width: "0",
                 videoId: getYoutubeId(formData.musicUrl),
                 playerVars: {
-                    autoplay: 0,
+                    autoplay: 1,
                     controls: 0,
                     disablekb: 1,
                     fs: 0,
@@ -117,16 +117,13 @@
     }
 </script>
 
-<!-- ELEMENTO DE ÁUDIO OCULTO -->
 {#if formData.hasMusic}
-    <!-- <audio bind:this={audio} src={formData.audioSrc} loop></audio> -->
     <div
         id="youtube-player"
-        style="position: absolute; width: 0; height: 0; pointer-events: none;"
+        style="position: absolute; width: 0; height: 0; pointer-events: none; visibility: hidden;"
     ></div>
 {/if}
 
-<!-- FUNDO ANIMADO -->
 <div class="floating-hearts">
     {#each Array(20) as _, i}
         <div
@@ -145,32 +142,28 @@
 
 <main class="letter-viewer">
     {#if !isOpen}
-        <!-- ENVELOPE CENTRALIZADO -->
         <div
             class="envelope-container"
             class:opening={isOpening}
             on:click={handleOpen}
+            out:fade
         >
             <div class="envelope">
                 <div class="flap"></div>
                 <div class="pocket"></div>
-
                 <div class="letter-inside">
                     <div class="letter-text">
                         <Heart size={24} fill="#db2777" color="#db2777" />
-                        <p>Para o meu grande amor...</p>
+                        <p>Uma mensagem especial...</p>
                     </div>
                 </div>
-
                 <div class="seal">
                     <Heart fill="#db2777" color="#db2777" size={40} />
                 </div>
-
                 <div class="envelope-label">
                     <p>Para: {formData.title}</p>
                 </div>
             </div>
-
             {#if !isOpening}
                 <div class="click-hint" in:fade>
                     <Sparkles size={16} /> Toque para abrir
@@ -178,7 +171,6 @@
             {/if}
         </div>
     {:else}
-        <!-- CADERNO RESPONSIVO -->
         <div class="notebook-section" in:fly={{ y: 50, duration: 1000 }}>
             <div class="notebook-case">
                 <div class="notebook-page">
@@ -241,17 +233,13 @@
                             >
                         </div>
 
-                        <!-- PLAYER ESTILO INSTAGRAM -->
                         {#if formData.hasMusic}
                             <div
                                 class="instagram-player"
                                 on:click={toggleMusic}
                             >
                                 <div class="player-left">
-                                    <div
-                                        class="album-art"
-                                        class:rotating={isPlaying}
-                                    >
+                                    <div class="album-art">
                                         <img
                                             src="https://files.botsync.site/modelos-certificados/modelo_padrao.jpeg"
                                             alt="Capa"
@@ -263,7 +251,11 @@
                                                     ></span><span></span>
                                                 </div>
                                             {:else}
-                                                <Play size={14} fill="white" />
+                                                <Play
+                                                    size={14}
+                                                    fill="white"
+                                                    color="white"
+                                                />
                                             {/if}
                                         </div>
                                     </div>
@@ -291,7 +283,7 @@
                     isOpen = false;
                     isOpening = false;
                     isPlaying = false;
-                    audio?.pause();
+                    player?.pauseVideo();
                 }}
             >
                 <X size={18} /> Fechar Presente
@@ -307,23 +299,25 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        height: 100%;
+        min-height: 100%;
         background: #fffafa;
+        overflow-x: hidden;
     }
 
-    /* FUNDO */
     .floating-hearts {
         position: fixed;
         inset: 0;
         pointer-events: none;
         z-index: 0;
     }
+
     .heart-particle {
         position: absolute;
         bottom: -50px;
         opacity: 0;
         animation: floatUp 12s linear infinite;
     }
+
     @keyframes floatUp {
         0% {
             transform: translateY(0) rotate(0deg);
@@ -348,26 +342,25 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        padding: 20px;
+        padding: 15px;
         box-sizing: border-box;
         position: relative;
         z-index: 1;
     }
 
-    /* ENVELOPE */
     .envelope-container {
         cursor: pointer;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 25px;
-        max-width: 90vw;
+        gap: 20px;
+        width: 100%;
+        max-width: 320px;
     }
 
     .envelope {
-        width: 320px;
-        max-width: 85vw;
-        height: 220px;
+        width: 100%;
+        height: 200px;
         background: #ffffff;
         position: relative;
         box-shadow: 0 20px 50px rgba(219, 39, 119, 0.2);
@@ -377,6 +370,7 @@
     .flap {
         position: absolute;
         top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
         background: #fbcfe8;
@@ -417,14 +411,14 @@
     }
 
     .opening .letter-inside {
-        transform: translateY(-120px);
+        transform: translateY(-100px);
     }
 
     .letter-text {
         font-family: "Great Vibes", cursive;
         color: #db2777;
         text-align: center;
-        padding: 15px;
+        font-size: 1.1rem;
     }
 
     .seal {
@@ -435,24 +429,25 @@
         z-index: 11;
         transition: opacity 0.3s;
     }
+
     .opening .seal {
         opacity: 0;
     }
 
     .envelope-label {
         position: absolute;
-        bottom: 25px;
+        bottom: 20px;
         width: 100%;
         text-align: center;
         z-index: 6;
         color: #db2777;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
     }
 
     .click-hint {
         color: #db2777;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -462,30 +457,29 @@
         gap: 8px;
     }
 
-    /* CADERNO */
     .notebook-section {
         width: 100%;
-        max-width: 480px;
+        max-width: 450px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        gap: 20px;
     }
 
     .notebook-case {
         background: #3d0514;
-        padding: 10px;
-        border-radius: 20px;
-        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        padding: 8px;
+        border-radius: 16px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         width: 100%;
         box-sizing: border-box;
     }
 
     .notebook-page {
         background: white;
-        min-height: 80vh;
+        min-height: 500px;
         position: relative;
-        padding: 4rem 1.5rem 3rem 4rem;
+        padding: 3rem 1rem 2rem 3.2rem;
         display: flex;
         flex-direction: column;
         overflow: hidden;
@@ -504,7 +498,7 @@
     }
     .page-margin-red {
         position: absolute;
-        left: 55px;
+        left: 45px;
         top: 0;
         bottom: 0;
         width: 1px;
@@ -513,7 +507,7 @@
     }
     .page-spiral {
         position: absolute;
-        left: 10px;
+        left: 8px;
         top: 0;
         bottom: 0;
         display: flex;
@@ -522,8 +516,8 @@
         z-index: 10;
     }
     .spiral-hole {
-        width: 10px;
-        height: 10px;
+        width: 9px;
+        height: 9px;
         background: #1a0208;
         border-radius: 50%;
     }
@@ -537,22 +531,23 @@
     }
     .notebook-title {
         font-family: "Great Vibes", cursive;
-        font-size: clamp(2rem, 8vw, 2.8rem);
+        font-size: 2.2rem;
         color: #1a0208;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
     }
 
     .photo-area {
         position: relative;
         width: 100%;
-        max-width: 300px;
-        margin: 1rem auto 2.5rem;
+        max-width: 260px;
+        margin: 1rem auto 2rem;
     }
     .photo-frame {
         background: white;
-        padding: 6px;
+        padding: 5px;
         border: 1px solid #f0f0f0;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
     .photo-frame img {
         width: 100%;
@@ -563,11 +558,11 @@
 
     .carousel-indicators {
         position: absolute;
-        bottom: 15px;
+        bottom: 12px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 6px;
+        gap: 5px;
     }
     .dot {
         width: 5px;
@@ -578,99 +573,99 @@
     }
     .dot.active {
         background: white;
-        transform: scale(1.4);
+        transform: scale(1.3);
     }
 
     .tape {
         position: absolute;
-        width: 70px;
-        height: 25px;
+        width: 60px;
+        height: 22px;
         background: rgba(210, 207, 182, 0.4);
         z-index: 6;
     }
     .tape-tl {
-        top: -10px;
-        left: -20px;
+        top: -8px;
+        left: -15px;
         transform: rotate(-30deg);
     }
     .tape-br {
-        bottom: -10px;
-        right: -20px;
+        bottom: -8px;
+        right: -15px;
         transform: rotate(-35deg);
     }
 
     .notebook-message {
         font-family: "Great Vibes", cursive;
-        font-size: 1.6rem;
+        font-size: 1.4rem;
         color: #2d0a14;
         line-height: 31px;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
+        word-wrap: break-word;
     }
 
     .timer-box {
         background: #fff1f4;
-        border-radius: 15px;
-        padding: 15px;
+        border-radius: 12px;
+        padding: 12px;
         text-align: center;
         border: 1px solid #fce7f3;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
     }
     .timer-label {
         font-family: "Great Vibes", cursive;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         color: #db2777;
         display: block;
+        margin-bottom: 5px;
     }
     .timer-text {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         font-weight: 600;
         color: #4a0e0e;
+        line-height: 1.4;
     }
 
     .signature {
         margin-top: auto;
         text-align: right;
         font-family: "Great Vibes", cursive;
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         color: #888;
     }
     .signature-name {
         color: #1a0208;
-        font-size: 2rem;
-        margin-left: 8px;
+        font-size: 1.8rem;
+        margin-left: 5px;
     }
 
-    /* PLAYER INSTAGRAM */
     .instagram-player {
         background: #121212;
-        border-radius: 12px;
-        padding: 10px 14px;
+        border-radius: 10px;
+        padding: 8px 12px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 25px;
+        margin-top: 15px;
         cursor: pointer;
-        user-select: none;
     }
-
     .player-left {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
     }
     .album-art {
-        width: 44px;
-        height: 44px;
-        border-radius: 6px;
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
         overflow: hidden;
         position: relative;
+        flex-shrink: 0;
     }
     .album-art img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-
     .player-icon-overlay {
         position: absolute;
         inset: 0;
@@ -679,12 +674,11 @@
         align-items: center;
         justify-content: center;
     }
-
     .sound-bars {
         display: flex;
         align-items: flex-end;
         gap: 2px;
-        height: 12px;
+        height: 10px;
     }
     .sound-bars span {
         width: 2px;
@@ -697,45 +691,49 @@
     .sound-bars span:nth-child(3) {
         animation-delay: 0.4s;
     }
-
     @keyframes barAnim {
         0%,
         100% {
-            height: 4px;
+            height: 3px;
         }
         50% {
-            height: 12px;
+            height: 10px;
         }
     }
-
     .song-info {
         display: flex;
         flex-direction: column;
+        overflow: hidden;
     }
     .song-name {
         color: white;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
     .song-meta {
         color: #b3b3b3;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
     }
     .player-right {
         color: white;
         opacity: 0.8;
+        flex-shrink: 0;
     }
 
     .btn-close {
         background: #db2777;
         color: white;
         border: none;
-        padding: 14px 40px;
+        padding: 12px 30px;
         border-radius: 50px;
         font-weight: 700;
         cursor: pointer;
         margin-top: 10px;
-        box-shadow: 0 10px 20px rgba(219, 39, 119, 0.2);
+        box-shadow: 0 8px 15px rgba(219, 39, 119, 0.2);
+        font-size: 0.9rem;
     }
 
     @keyframes pulse {
@@ -750,22 +748,24 @@
         }
     }
 
-    @media (max-width: 480px) {
-        .notebook-page {
-            padding: 3rem 1rem 2rem 3.5rem;
-        }
-        .page-margin-red {
-            left: 48px;
-        }
+    @media (max-width: 400px) {
         .notebook-title {
             font-size: 1.8rem;
         }
         .notebook-message {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
+        }
+        .notebook-page {
+            padding-left: 2.8rem;
+        }
+        .page-margin-red {
+            left: 38px;
+        }
+        .page-spiral {
+            left: 6px;
         }
         .envelope {
-            width: 280px;
-            height: 190px;
+            height: 180px;
         }
     }
 </style>
