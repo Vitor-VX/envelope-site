@@ -304,7 +304,9 @@
               <div class="custom-checkbox">
                 {#if confirmWhatsapp}<Check size={14} strokeWidth={4} />{/if}
               </div>
-              <span>Confirmo que meu WhatsApp está correto para receber o link</span>
+              <span
+                >Confirmo que meu WhatsApp está correto para receber o link</span
+              >
             </label>
           </div>
         </div>
@@ -544,11 +546,11 @@
   }
   .photo-slot {
     margin-top: 10px;
+    max-height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    aspect-ratio: 1;
     background: #fdfdfd;
     border: 2px dashed #ffccd5;
     border-radius: 24px;
@@ -569,6 +571,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 30px;
     cursor: pointer;
     color: #4a0e0e;
     gap: 8px;
@@ -579,17 +582,18 @@
   }
 
   .photo-preview {
-    width: 100%;
-    height: 100%;
-    border-radius: 22px;
-    overflow: hidden;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .photo-preview img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
   }
+
   .remove-btn {
     position: absolute;
     top: 10px;
@@ -849,12 +853,24 @@
       font-size: 3rem;
     }
     .photo-grid {
-      grid-template-columns: 1fr;
-      gap: 15px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
-    .photo-slot {
-      aspect-ratio: 16/9;
+    /* .photo-slot {
+      border: none;
     }
+    .photo-preview {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .photo-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    } */
     .form-row {
       grid-template-columns: 1fr;
       gap: 0;

@@ -47,10 +47,10 @@
 </script>
 
 <svelte:head>
-  <title>Certificado do Amor – Presente Personalizado Digital</title>
+  <title>Envelope do Amor – Presente Personalizado Digital</title>
   <meta
     name="description"
-    content="Surpreenda quem você ama com um Certificado do Amor personalizado. Um presente simbólico para celebrar histórias especiais, datas importantes e momentos únicos."
+    content="Surpreenda quem você ama com um Envelope do Amor personalizado. Um presente simbólico para celebrar histórias especiais, datas importantes e momentos únicos."
   />
   <link rel="icon" href={icon} />
 

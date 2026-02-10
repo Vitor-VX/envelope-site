@@ -9,8 +9,8 @@
   <div class="step-header">
     <h2>Escolha a dose de amor ideal</h2>
     <p>
-      Cada certidão é única e pode ser personalizada individualmente para o seu
-      momento especial.
+      Cada envelope é único e pode ser personalizado especialmente para a
+      história de vocês.
     </p>
   </div>
 
