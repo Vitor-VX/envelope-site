@@ -1,12 +1,19 @@
 <script lang="ts">
-  import { ShoppingBag, Edit3, Send, DollarSign, Heart } from "lucide-svelte";
+  import {
+    Edit3,
+    Send,
+    DollarSign,
+    Heart,
+    Infinity,
+    Calendar,
+  } from "lucide-svelte";
 
   export let onStartCheckout: () => void;
 </script>
 
 <section class="how-it-works">
   <div class="container">
-    <h2 class="text-center section-title">Passo a passo para a surpresa</h2>
+    <h2 class="text-center section-title">Como criar sua surpresa</h2>
 
     <div class="steps">
       <div class="step">
@@ -15,12 +22,15 @@
           <span>1</span>
         </div>
         <div class="step-icon">
-          <ShoppingBag size={32} color="#ff4d6d" />
+          <div class="icon-stack">
+            <Calendar size={20} class="icon-sub" />
+            <Infinity size={32} color="#ff4d6d" />
+          </div>
         </div>
-        <h3>Escolha o pacote</h3>
+        <h3>Escolha seu plano</h3>
         <p>
-          Selecione quantos certificados do amor você deseja criar para
-          presentear.
+          Selecione entre o <b>Acesso por 24 meses</b> ou garanta sua história
+          para sempre com o plano <b>Vitalício</b>.
         </p>
       </div>
 
@@ -36,8 +46,8 @@
         </div>
         <h3>Personalize tudo</h3>
         <p>
-          Informe o nome do casal, a data de início do relacionamento e a
-          cidade/estado onde moram.
+          Adicione fotos, escreva sua mensagem e escolha a música que será a
+          trilha sonora do seu envelope.
         </p>
       </div>
 
@@ -52,7 +62,9 @@
           <DollarSign size={32} color="#ff4d6d" />
         </div>
         <h3>Pagamento Pix</h3>
-        <p>Finalize com Pix de forma instantânea e totalmente segura.</p>
+        <p>
+          Finalize com Pix de forma instantânea e libere seu acesso na hora.
+        </p>
       </div>
 
       <div class="step-connector"></div>
@@ -65,16 +77,17 @@
         <div class="step-icon">
           <Send size={32} color="#ff4d6d" />
         </div>
-        <h3>Receba o Amor</h3>
+        <h3>Receba o Link</h3>
         <p>
-          Sua certidão digital chega direto no seu WhatsApp em poucos minutos.
+          Sua página exclusiva do Envelope do Amor chega direto no seu WhatsApp
+          e E-mail em poucos minutos.
         </p>
       </div>
     </div>
 
     <div class="text-center mt-8">
       <button class="btn btn-primary btn-large" on:click={onStartCheckout}>
-        Quero criar a minha agora
+        Quero criar meu envelope agora
       </button>
     </div>
   </div>
@@ -92,8 +105,9 @@
   .section-title {
     font-family: "Great Vibes", cursive;
     color: #5e0b15;
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
     margin-bottom: 80px;
+    line-height: 1.1;
   }
 
   .steps {
@@ -109,7 +123,7 @@
     flex: 1;
     text-align: center;
     position: relative;
-    padding: 0 10px;
+    padding: 0 15px;
     z-index: 1;
   }
 
@@ -136,8 +150,19 @@
     border-radius: 24px;
     margin: 20px auto 24px;
     width: fit-content;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: 2px solid #feeafa;
     transition: all 0.3s ease;
+  }
+
+  .icon-stack {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .step:hover .step-icon {
@@ -160,19 +185,20 @@
     font-family: "Poppins", sans-serif;
     font-size: 1.15rem;
     color: #4a0e0e;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 12px;
   }
 
   .step p {
     color: #8d5b5b;
     font-size: 0.95rem;
-    line-height: 1.5;
+    line-height: 1.6;
+    margin-bottom: 0;
   }
 
   .btn-large {
     padding: 20px 40px;
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     border-radius: 50px;
     background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 100%);
     box-shadow: 0 10px 25px rgba(201, 24, 74, 0.3);
@@ -183,11 +209,25 @@
     align-items: center;
     gap: 12px;
     transition: all 0.3s ease;
+    font-weight: 700;
+  }
+
+  .btn-large:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(201, 24, 74, 0.4);
   }
 
   @media (max-width: 992px) {
     .step-connector {
       display: none;
+    }
+    .steps {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 40px;
+    }
+    .step {
+      flex: 0 0 45%;
     }
   }
 
@@ -203,6 +243,7 @@
 
     .step {
       width: 100%;
+      flex: none;
     }
 
     .step-number {
@@ -214,11 +255,14 @@
 
     .step-icon {
       margin-top: 0;
+      height: 80px;
+      padding: 20px;
     }
 
     .btn-large {
-      width: 100%;
+      width: 90%;
       padding: 18px;
+      font-size: 1.1rem;
     }
   }
 </style>

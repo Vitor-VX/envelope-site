@@ -118,8 +118,8 @@
 
 {#if !showCheckout}
   <Hero onStartCheckout={startCheckout} />
-  <SocialProof />
-  <Templates />
+  <!-- <SocialProof /> -->
+  <!-- <Templates /> -->
   <Benefits />
   <HowItWorks onStartCheckout={startCheckout} />
 {:else}

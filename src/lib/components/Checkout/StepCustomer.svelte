@@ -14,6 +14,9 @@
     Clock,
     Trash2,
     Youtube,
+    Send,
+    Lock,
+    ChevronRight,
   } from "lucide-svelte";
   import {
     checkoutStore,
@@ -21,6 +24,7 @@
     updatePersonData,
   } from "$lib/stores/checkoutStore";
   import { track } from "$lib/track/meta";
+  import { fade, slide } from "svelte/transition";
 
   export let onNext: () => void;
 
@@ -35,7 +39,6 @@
   $: ({ selectedProduct, people, totalAmount, selectedExtras } =
     $checkoutStore);
 
-  // Função para atualizar os dados específicos do envelope (armazenados em people[0])
   function handleDataUpdate(field: string, value: any) {
     updatePersonData(0, { [field]: value });
   }
@@ -76,24 +79,10 @@
       alert("Por favor, preencha seus dados de envio.");
       return;
     }
-
     if (!p?.title || !p?.message || !p?.sender) {
-      alert(
-        "Por favor, preencha o título, a mensagem e a assinatura do seu envelope.",
-      );
+      alert("Por favor, preencha o título, a mensagem e a assinatura.");
       return;
     }
-
-    if (p.showTimer && !p.startDate) {
-      alert("Por favor, informe a data de início do relacionamento.");
-      return;
-    }
-
-    if (p.hasMusic && !p.musicUrl) {
-      alert("Por favor, insira o link da música do YouTube.");
-      return;
-    }
-
     if (!confirmWhatsapp) {
       alert("Por favor, confirme que seu WhatsApp está correto.");
       return;
@@ -108,315 +97,471 @@
   }
 </script>
 
+<div class="love-bg-decoration">
+  <div class="floating-heart h1">❤</div>
+  <div class="floating-heart h2">❤</div>
+  <div class="floating-heart h3">❤</div>
+</div>
+
 <div class="step-customer">
-  <div class="content-wrapper">
-    <div class="form-section">
-      <div class="section-header">
-        <h2>💌 Crie seu Envelope do Amor</h2>
-        <p>Personalize cada detalhe da sua surpresa digital</p>
-      </div>
-
-      <!-- SEÇÃO 1: CONTEÚDO VISUAL -->
-      <div class="person-form card">
-        <h3 class="romantic-title"><ImageIcon size={20} /> Visual e Fotos</h3>
-
-        <div class="form-group">
-          <label for="env-title">Título da Mensagem</label>
-          <input
-            id="env-title"
-            type="text"
-            placeholder="Ex: Para o grande amor da minha vida"
-            value={people[0]?.title || ""}
-            on:input={(e) => handleDataUpdate("title", e.currentTarget.value)}
-          />
-        </div>
-
-        <div class="form-group">
-          <label>Fotos Especiais (Até 3)</label>
-          <div class="photo-grid">
-            {#each Array(3) as _, i}
-              <div class="photo-slot">
-                {#if people[0]?.photos?.[i]}
-                  <div class="photo-preview">
-                    <img src={people[0].photos[i]} alt="Preview" />
-                    <button class="remove-btn" on:click={() => removePhoto(i)}
-                      ><Trash2 size={14} /></button
-                    >
-                  </div>
-                {:else}
-                  <label class="upload-label">
-                    <Camera size={24} />
-                    <span>Adicionar</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      on:change={(e) => handlePhotoUpload(i, e)}
-                    />
-                  </label>
-                {/if}
-              </div>
-            {/each}
+  <div class="container">
+    <div class="content-wrapper">
+      <div class="form-section">
+        <div class="section-header">
+          <div class="header-icon-box">
+            <Mail size={32} color="white" strokeWidth={1.5} />
+            <div class="heart-badge"><Heart size={14} fill="white" /></div>
+          </div>
+          <div class="header-texts">
+            <span class="pre-title">Personalize seu presente</span>
+            <h2>Seu Envelope do Amor</h2>
+            <p>Eternize sua história em uma experiência digital inesquecível</p>
           </div>
         </div>
-      </div>
 
-      <!-- SEÇÃO 2: MENSAGEM -->
-      <div class="person-form card">
-        <h3 class="romantic-title"><Type size={20} /> Mensagem de Amor</h3>
+        <!-- VISUAL E FOTOS -->
+        <div class="glass-card person-form">
+          <h3 class="romantic-title"><ImageIcon size={22} /> Fotos & Título</h3>
 
-        <div class="form-group">
-          <label for="env-msg">Sua Mensagem</label>
-          <textarea
-            id="env-msg"
-            rows="5"
-            placeholder="Escreva aqui tudo o que você sente..."
-            value={people[0]?.message || ""}
-            on:input={(e) => handleDataUpdate("message", e.currentTarget.value)}
-          ></textarea>
-        </div>
-
-        <div class="form-group">
-          <label for="env-sender">Assinatura</label>
-          <input
-            id="env-sender"
-            type="text"
-            placeholder="Ex: Com amor, João"
-            value={people[0]?.sender || ""}
-            on:input={(e) => handleDataUpdate("sender", e.currentTarget.value)}
-          />
-        </div>
-      </div>
-
-      <!-- SEÇÃO 3: EXTRAS (CONTADOR E MÚSICA) -->
-      <div class="person-form card">
-        <h3 class="romantic-title"><Sparkles size={20} /> Toques Especiais</h3>
-
-        <!-- Contador -->
-        <div class="extra-option">
-          <label class="checkbox-container">
-            <input
-              type="checkbox"
-              checked={people[0]?.showTimer || false}
-              on:change={(e) =>
-                handleDataUpdate("showTimer", e.currentTarget.checked)}
-            />
-            <span class="checkmark"></span>
-            <div class="text">
-              <strong>Contador de tempo juntos</strong>
-              <p>Ideal para nunca esquecerem a data de vocês.</p>
-            </div>
-          </label>
-
-          {#if people[0]?.showTimer}
-            <div class="conditional-input animate-fade">
-              <label
-                ><Calendar size={16} /> Data de início do relacionamento</label
-              >
-              <input
-                type="date"
-                value={people[0]?.startDate || ""}
-                on:change={(e) =>
-                  handleDataUpdate("startDate", e.currentTarget.value)}
-              />
-            </div>
-          {/if}
-        </div>
-
-        <div class="divider-small"></div>
-
-        <!-- Música -->
-        <div class="extra-option">
-          <label class="checkbox-container">
-            <input
-              type="checkbox"
-              checked={people[0]?.hasMusic || false}
-              on:change={(e) =>
-                handleDataUpdate("hasMusic", e.currentTarget.checked)}
-            />
-            <span class="checkmark"></span>
-            <div class="text">
-              <strong>Adicionar trilha sonora</strong>
-              <p>Uma música especial que toca ao abrir o envelope.</p>
-            </div>
-          </label>
-
-          {#if people[0]?.hasMusic}
-            <div class="conditional-input animate-fade">
-              <label><Youtube size={16} /> Link da música (YouTube)</label>
-              <input
-                type="url"
-                placeholder="https://www.youtube.com/watch?v=..."
-                value={people[0]?.musicUrl || ""}
-                on:input={(e) =>
-                  handleDataUpdate("musicUrl", e.currentTarget.value)}
-              />
-            </div>
-          {/if}
-        </div>
-      </div>
-
-      <!-- SEÇÃO 4: DADOS DO CLIENTE -->
-      <div class="customer-section card">
-        <h3 class="romantic-title"><Mail size={20} /> Dados de Envio</h3>
-        <div class="form-group">
-          <label>Seu Nome Completo</label>
-          <input
-            type="text"
-            bind:value={customerData.name}
-            placeholder="Nome de quem presenteia"
-          />
-        </div>
-        <div class="form-row">
           <div class="form-group">
-            <label>Seu WhatsApp</label>
+            <label for="env-title">Qual será o título da surpresa?</label>
+            <input
+              id="env-title"
+              type="text"
+              placeholder="Ex: Para o Amor da Minha Vida"
+              value={people[0]?.title || ""}
+              on:input={(e) => handleDataUpdate("title", e.currentTarget.value)}
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Selecione até 3 fotos marcantes</label>
+            <div class="photo-grid">
+              {#each Array(3) as _, i}
+                <div class="photo-slot">
+                  {#if people[0]?.photos?.[i]}
+                    <div class="photo-preview" in:fade>
+                      <img src={people[0].photos[i]} alt="Preview" />
+                      <button class="remove-btn" on:click={() => removePhoto(i)}
+                        ><Trash2 size={14} /></button
+                      >
+                    </div>
+                  {:else}
+                    <label class="upload-label">
+                      <ImageIcon size={32} />
+                      <span>Adicionar</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        on:change={(e) => handlePhotoUpload(i, e)}
+                      />
+                    </label>
+                  {/if}
+                </div>
+              {/each}
+            </div>
+          </div>
+        </div>
+
+        <!-- MENSAGEM -->
+        <div class="glass-card person-form">
+          <h3 class="romantic-title"><Type size={22} /> Mensagem Romântica</h3>
+
+          <div class="form-group">
+            <label for="env-msg">O que o seu coração quer dizer?</label>
+            <textarea
+              id="env-msg"
+              rows="5"
+              placeholder="Escreva sua carta de amor aqui..."
+              value={people[0]?.message || ""}
+              on:input={(e) =>
+                handleDataUpdate("message", e.currentTarget.value)}
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="env-sender">Como você deseja assinar?</label>
+            <input
+              id="env-sender"
+              type="text"
+              placeholder="Ex: Com todo meu amor, João"
+              value={people[0]?.sender || ""}
+              on:input={(e) =>
+                handleDataUpdate("sender", e.currentTarget.value)}
+            />
+          </div>
+        </div>
+
+        <!-- EXTRAS -->
+        <div class="glass-card person-form">
+          <h3 class="romantic-title"><Sparkles size={22} /> Toques Mágicos</h3>
+
+          <div class="extra-option">
+            <label class="custom-check-wrapper">
+              <input
+                type="checkbox"
+                checked={people[0]?.showTimer || false}
+                on:change={(e) =>
+                  handleDataUpdate("showTimer", e.currentTarget.checked)}
+              />
+              <div class="custom-check-box">
+                <Check size={16} strokeWidth={4} />
+              </div>
+              <div class="text-info">
+                <strong>Contador de Tempo Juntos</strong>
+                <span
+                  >Mostra há quantos dias, horas e minutos vocês estão juntos.</span
+                >
+              </div>
+            </label>
+
+            {#if people[0]?.showTimer}
+              <div class="conditional-input" transition:slide>
+                <label
+                  ><Calendar size={16} /> Data de início do relacionamento</label
+                >
+                <input
+                  type="date"
+                  value={people[0]?.startDate || ""}
+                  on:change={(e) =>
+                    handleDataUpdate("startDate", e.currentTarget.value)}
+                />
+              </div>
+            {/if}
+          </div>
+
+          <div class="spacer-line"></div>
+
+          <div class="extra-option">
+            <label class="custom-check-wrapper">
+              <input
+                type="checkbox"
+                checked={people[0]?.hasMusic || false}
+                on:change={(e) =>
+                  handleDataUpdate("hasMusic", e.currentTarget.checked)}
+              />
+              <div class="custom-check-box">
+                <Check size={16} strokeWidth={4} />
+              </div>
+              <div class="text-info">
+                <strong>Trilha Sonora Especial (YouTube)</strong>
+                <span>A música tocará automaticamente ao abrir o envelope.</span
+                >
+              </div>
+            </label>
+
+            {#if people[0]?.hasMusic}
+              <div class="conditional-input" transition:slide>
+                <label><Youtube size={16} /> Link da música no YouTube</label>
+                <input
+                  type="url"
+                  placeholder="Cole o link do YouTube aqui..."
+                  value={people[0]?.musicUrl || ""}
+                  on:input={(e) =>
+                    handleDataUpdate("musicUrl", e.currentTarget.value)}
+                />
+              </div>
+            {/if}
+          </div>
+        </div>
+
+        <div class="glass-card customer-section">
+          <h3 class="romantic-title">
+            <Send size={22} /> Informações de Envio
+          </h3>
+          <div class="form-group">
+            <label>Seu Nome Completo</label>
             <input
               type="text"
-              value={customerData.whatsapp}
-              on:input={(e) =>
-                (customerData.whatsapp = formatPhone(e.currentTarget.value))}
-              placeholder="(00) 00000-0000"
+              bind:value={customerData.name}
+              placeholder="Nome de quem presenteia"
             />
           </div>
-          <div class="form-group">
-            <label>Seu E-mail</label>
-            <input
-              type="email"
-              bind:value={customerData.email}
-              placeholder="email@exemplo.com"
-            />
-          </div>
-        </div>
-
-        <div class="checkbox-group">
-          <label class="checkbox-label">
-            <input type="checkbox" bind:checked={confirmWhatsapp} />
-            <div class="custom-checkbox">
-              {#if confirmWhatsapp}<Check size={14} strokeWidth={4} />{/if}
+          <div class="form-row">
+            <div class="form-group">
+              <label>Seu WhatsApp</label>
+              <input
+                type="text"
+                value={customerData.whatsapp}
+                on:input={(e) =>
+                  (customerData.whatsapp = formatPhone(e.currentTarget.value))}
+                placeholder="(00) 00000-0000"
+              />
             </div>
-            <span
-              >Confirmo que meus dados estão corretos para receber o link.</span
+            <div class="form-group">
+              <label>Seu mellhor E-mail</label>
+              <input
+                type="email"
+                bind:value={customerData.email}
+                placeholder="seu@email.com"
+              />
+            </div>
+          </div>
+
+          <div class="final-confirmation">
+            <label class="checkbox-label">
+              <input type="checkbox" bind:checked={confirmWhatsapp} />
+              <div class="custom-checkbox">
+                {#if confirmWhatsapp}<Check size={14} strokeWidth={4} />{/if}
+              </div>
+              <span>Confirmo que meu WhatsApp está correto para receber o link</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn-purchase-love" on:click={handleSubmit}>
+          <Heart size={20} fill="white" />
+          Gerar Meu Envelope Agora
+          <ChevronRight size={20} />
+        </button>
+      </div>
+
+      <!-- SUMÁRIO -->
+      <aside class="summary-section">
+        <div class="order-summary-card">
+          <div class="envelope-edge"></div>
+          <h3>Resumo do Pedido</h3>
+          <div class="summary-item">
+            <span>Plano Selecionado</span>
+            <span class="price-val">{selectedProduct?.name}</span>
+          </div>
+
+          {#each selectedExtras.filter((e) => e.selected) as extra}
+            <div class="summary-item extra-row" in:fade>
+              <span>{extra.name}</span>
+              <span class="price-val"
+                >+ R$ {extra.price.toFixed(2).replace(".", ",")}</span
+              >
+            </div>
+          {/each}
+
+          <div class="summary-divider"></div>
+          <div class="summary-total">
+            <div class="total-label">
+              <span>Valor Total</span>
+              <small>Em até 12x no cartão</small>
+            </div>
+            <span class="total-amount"
+              >R$ {totalAmount.toFixed(2).replace(".", ",")}</span
             >
-          </label>
+          </div>
+          <div class="secure-badge">
+            <Lock size={14} /> Pagamento 100% Protegido
+          </div>
         </div>
-      </div>
-
-      <button class="btn-compra btn-large" on:click={handleSubmit}>
-        Gerar Meu Envelope & Pagar
-      </button>
-    </div>
-
-    <!-- SUMÁRIO STICKY -->
-    <div class="summary-section">
-      <div class="order-summary card">
-        <h3>Resumo da Surpresa</h3>
-        <div class="summary-item">
-          <span class="label">Produto:</span>
-          <span class="value">Envelope do Amor Digital</span>
-        </div>
-        <div class="summary-item">
-          <span class="label">Fotos inclusas:</span>
-          <span class="value"
-            >{people[0]?.photos?.filter(Boolean).length || 0}/3</span
-          >
-        </div>
-
-        <div class="summary-divider"></div>
-        <div class="summary-total">
-          <span class="label">Total:</span>
-          <span class="value"
-            >R$ {totalAmount.toFixed(2).replace(".", ",")}</span
-          >
-        </div>
-        <div class="secure-badge">
-          <Check size={14} /> Pagamento 100% Seguro
-        </div>
-      </div>
+      </aside>
     </div>
   </div>
 </div>
 
 <style>
-  .step-customer {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding-bottom: 50px;
+  @import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;500;600;700&display=swap");
+
+  :root {
+    --primary-love: #ff4d6d;
+    --secondary-love: #c9184a;
+    --bg-love: #fff8f9;
+    --text-deep: #4a0e0e;
   }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .step-customer {
+    min-height: 100vh;
+    padding: 40px 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* DECORAÇÃO */
+  .love-bg-decoration {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .floating-heart {
+    position: absolute;
+    color: #ffccd5;
+    font-size: 2.5rem;
+    opacity: 0.4;
+    animation: float 8s infinite ease-in-out;
+  }
+  .h1 {
+    top: 5%;
+    left: 3%;
+  }
+  .h2 {
+    top: 75%;
+    right: 4%;
+    animation-delay: 2s;
+  }
+  .h3 {
+    top: 40%;
+    left: 85%;
+    animation-delay: 4s;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-30px) rotate(15deg);
+    }
+  }
+
+  /* LAYOUT */
   .content-wrapper {
     display: grid;
     grid-template-columns: 1.8fr 1.2fr;
-    gap: 30px;
-    align-items: start;
+    gap: 40px;
   }
 
-  .section-header h2 {
-    font-family: "Great Vibes", cursive;
-    color: #5e0b15;
-    font-size: 3rem;
-    margin-bottom: 10px;
+  /* HEADER ESTILIZADO */
+  .section-header {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 50px;
+    align-items: center;
   }
-  .romantic-title {
-    font-size: 1.2rem;
-    color: #c9184a;
-    margin-bottom: 20px;
+
+  .header-texts {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  .header-icon-box {
+    width: 70px;
+    height: 70px;
+    background: var(--secondary-love);
+    border-radius: 22px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-weight: 600;
-    border-bottom: 1px solid #feeafa;
-    padding-bottom: 10px;
+    justify-content: center;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(201, 24, 74, 0.2);
+    flex-shrink: 0;
+  }
+  .heart-badge {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: #ff8fa3;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid white;
+  }
+  .pre-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--primary-love);
+    font-weight: 800;
+  }
+  .section-header h2 {
+    font-family: "Great Vibes", cursive;
+    color: var(--text-deep);
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    margin: 0;
+    line-height: 0.9;
+  }
+  .section-header p {
+    color: #8d5b5b;
+    margin-top: 5px;
+    font-size: 1rem;
   }
 
-  .person-form,
-  .customer-section {
-    background: #fffafa;
-    border: 1px solid #ffccd5;
-    padding: 25px;
-    border-radius: 20px;
+  /* CARDS */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 77, 109, 0.15);
+    border-radius: 35px;
+    padding: 35px;
     margin-bottom: 25px;
+    box-shadow: 0 15px 35px rgba(74, 14, 14, 0.03);
+  }
+
+  .romantic-title {
+    font-size: 1.2rem;
+    color: var(--secondary-love);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
   }
 
   .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 25px;
   }
   .form-group label {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: #4a0e0e;
-    margin-bottom: 8px;
-  }
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1.5px solid #feeafa;
-    border-radius: 12px;
-    outline: none;
-    transition: 0.3s;
-    font-family: inherit;
-  }
-  .form-group input:focus,
-  .form-group textarea:focus {
-    border-color: #ff4d6d;
-    background: #fff;
+    color: #5e2a2a;
+    margin-bottom: 10px;
   }
 
+  input,
+  textarea {
+    width: 100%;
+    padding: 16px 22px;
+    border: 1.5px solid #feeafa;
+    border-radius: 20px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    background: #fdfdfd;
+    transition: all 0.3s;
+    box-sizing: border-box;
+  }
+  input:focus,
+  textarea:focus {
+    border-color: var(--primary-love);
+    background: white;
+    box-shadow: 0 0 0 5px rgba(255, 77, 109, 0.08);
+    outline: none;
+  }
+
+  /* FOTOS GRID */
   .photo-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
-    margin-top: 10px;
   }
   .photo-slot {
-    aspect-ratio: 1/1;
-    background: #fff;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    aspect-ratio: 1;
+    background: #fdfdfd;
     border: 2px dashed #ffccd5;
-    border-radius: 15px;
-    overflow: hidden;
+    border-radius: 24px;
     position: relative;
+    transition: 0.3s;
+    overflow: hidden;
   }
+
+  .photo-slot:hover {
+    border-color: var(--primary-love);
+    background: #fffcfd;
+  }
+
   .upload-label {
     width: 100%;
     height: 100%;
@@ -425,19 +570,21 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #ff8fa3;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    gap: 5px;
+    color: #4a0e0e;
+    gap: 8px;
   }
+
   .upload-label input {
     display: none;
   }
+
   .photo-preview {
     width: 100%;
     height: 100%;
+    border-radius: 22px;
+    overflow: hidden;
   }
+
   .photo-preview img {
     width: 100%;
     height: 100%;
@@ -445,166 +592,279 @@
   }
   .remove-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: #db2777;
+    top: 10px;
+    right: 10px;
+    background: var(--secondary-love);
     color: white;
     border: none;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
+    width: 26px;
+    height: 26px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   }
 
-  .extra-option {
-    padding: 10px 0;
-  }
-  .checkbox-container {
+  /* EXTRAS */
+  .custom-check-wrapper {
     display: flex;
-    align-items: flex-start;
-    gap: 12px;
+    gap: 15px;
     cursor: pointer;
-    position: relative;
+    align-items: center;
   }
-  .checkbox-container input {
+  .custom-check-wrapper input {
     display: none;
   }
-  .checkmark {
-    width: 22px;
-    height: 22px;
-    border: 2px solid #ff4d6d;
-    border-radius: 6px;
-    flex-shrink: 0;
-    position: relative;
-    margin-top: 3px;
-  }
-  .checkbox-container input:checked + .checkmark {
-    background: #ff4d6d;
-  }
-  .checkbox-container input:checked + .checkmark::after {
-    content: "✓";
+  .custom-check-box {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #ffccd5;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: white;
-    position: absolute;
-    left: 4px;
-    top: -1px;
-    font-weight: bold;
+    background: white;
+    transition: 0.3s;
   }
-  .text strong {
+  .custom-check-wrapper input:checked + .custom-check-box {
+    background: var(--primary-love);
+    border-color: var(--primary-love);
+  }
+  .text-info strong {
     display: block;
-    font-size: 0.95rem;
-    color: #4a0e0e;
+    font-size: 1rem;
+    color: var(--text-deep);
   }
-  .text p {
+  .text-info span {
     font-size: 0.8rem;
     color: #8d5b5b;
-    margin: 0;
   }
 
   .conditional-input {
-    margin-top: 15px;
-    padding-left: 34px;
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff8f9;
+    border-radius: 20px;
+    border: 1px solid #feeafa;
   }
   .conditional-input label {
-    font-size: 0.8rem;
+    color: var(--secondary-love);
     font-weight: 700;
-    color: #c9184a;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 5px;
+    gap: 8px;
   }
 
-  .divider-small {
+  .spacer-line {
     height: 1px;
     background: #feeafa;
-    margin: 15px 0;
+    margin: 25px 0;
   }
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 20px;
   }
 
-  .btn-compra {
-    background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 100%);
-    color: white;
-    border: none;
-    padding: 20px;
-    border-radius: 50px;
-    font-size: 1.2rem;
-    font-weight: 700;
+  /* BOTÃO COMPRA */
+  .btn-purchase-love {
     width: 100%;
-    box-shadow: 0 10px 25px rgba(201, 24, 74, 0.3);
+    padding: 24px;
+    border-radius: 60px;
+    background: linear-gradient(
+      135deg,
+      var(--primary-love) 0%,
+      var(--secondary-love) 100%
+    );
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border: none;
     cursor: pointer;
-    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    box-shadow: 0 15px 40px rgba(201, 24, 74, 0.25);
+    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  .btn-compra:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(201, 24, 74, 0.4);
+  .btn-purchase-love:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 45px rgba(201, 24, 74, 0.35);
   }
 
-  .order-summary {
+  /* SUMÁRIO */
+  .summary-section {
     position: sticky;
-    top: 20px;
+    top: 40px;
+  }
+  .order-summary-card {
     background: white;
-    border: 2px solid #feeafa;
-    padding: 30px;
-    border-radius: 25px;
+    border-radius: 35px;
+    padding: 45px 35px;
+    border: 1px solid #feeafa;
+    box-shadow: 0 20px 60px rgba(74, 14, 14, 0.05);
+    position: relative;
+    overflow: hidden;
+  }
+  .envelope-edge {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 12px;
+    background: repeating-linear-gradient(
+      -45deg,
+      #ff4d6d,
+      #ff4d6d 15px,
+      #fff 15px,
+      #fff 30px
+    );
+  }
+  .order-summary-card h3 {
+    font-weight: 700;
+    color: var(--text-deep);
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 1.2rem;
   }
   .summary-item {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
-    font-size: 0.9rem;
-    color: #4a0e0e;
+    margin-bottom: 18px;
+    font-size: 0.95rem;
+    color: #5e2a2a;
+  }
+  .extra-row {
+    color: var(--secondary-love);
+    font-weight: 600;
+  }
+  .summary-divider {
+    height: 1.5px;
+    background: #fff1f4;
+    margin: 25px 0;
   }
   .summary-total {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 30px;
+  }
+  .total-label span {
+    display: block;
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-deep);
+  }
+  .total-label small {
+    color: #8d5b5b;
+    font-size: 0.75rem;
+  }
+  .total-amount {
+    font-size: 2.2rem;
     font-weight: 800;
-    font-size: 1.4rem;
-    color: #c9184a;
-    margin-top: 15px;
+    color: var(--secondary-love);
+    letter-spacing: -1px;
   }
   .secure-badge {
     background: #f0fff4;
-    color: #2f855a;
-    padding: 10px;
-    border-radius: 12px;
-    font-size: 0.75rem;
+    color: #236c44;
+    padding: 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     font-weight: 700;
-    margin-top: 20px;
   }
 
-  .animate-fade {
-    animation: fadeIn 0.4s ease;
+  /* CHECKBOX FINAL */
+  .final-confirmation {
+    margin-top: 15px;
   }
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  .checkbox-label {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    cursor: pointer;
+    color: #8d5b5b;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  .checkbox-label input {
+    display: none;
+  }
+  .custom-checkbox {
+    width: 22px;
+    height: 22px;
+    border: 2px solid #ffccd5;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-love);
+    flex-shrink: 0;
+    background: white;
+  }
+  .checkbox-label input:checked + .custom-checkbox {
+    background: #fff0f3;
+    border-color: var(--primary-love);
   }
 
-  @media (max-width: 850px) {
+  /* RESPONSIVIDADE */
+  @media (max-width: 1024px) {
     .content-wrapper {
       grid-template-columns: 1fr;
+      gap: 30px;
     }
-    .order-summary {
-      position: static;
-      margin-top: 20px;
+    .summary-section {
+      order: -1;
+      position: relative;
+      top: 0;
+    }
+    .order-summary-card {
+      padding: 35px 25px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .step-customer {
+      padding: 20px 0;
+    }
+    .glass-card {
+      padding: 25px 18px;
+      border-radius: 25px;
+    }
+    .section-header {
+      flex-direction: column;
+      text-align: center;
+      gap: 15px;
+    }
+    .section-header h2 {
+      font-size: 3rem;
+    }
+    .photo-grid {
+      grid-template-columns: 1fr;
+      gap: 15px;
+    }
+    .photo-slot {
+      aspect-ratio: 16/9;
     }
     .form-row {
       grid-template-columns: 1fr;
+      gap: 0;
+    }
+    .total-amount {
+      font-size: 1.8rem;
+    }
+    .btn-purchase-love {
+      font-size: 1.1rem;
+      padding: 18px;
     }
   }
 </style>

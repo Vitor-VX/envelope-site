@@ -1,11 +1,18 @@
 <script lang="ts">
-  import { UserCheck, Zap, Shield, MessageSquare } from "lucide-svelte";
+  import {
+    UserCheck,
+    MailSearch,
+    Shield,
+    MessageSquare,
+    Heart,
+    Music,
+  } from "lucide-svelte";
 </script>
 
 <section class="benefits">
   <div class="container">
-    <h2 class="text-center section-title" style="">
-      Por que escolher nosso Certificado do Amor?
+    <h2 class="text-center section-title">
+      Por que presentear com o Envelope do Amor?
     </h2>
 
     <div class="grid grid-3">
@@ -13,10 +20,10 @@
         <div class="benefit-icon icon-red">
           <UserCheck size={40} />
         </div>
-        <h3>100% Personalizado</h3>
+        <h3>Experiência Única</h3>
         <p>
-          Cada certificado é criado com o nome do casal, a data especial e a
-          cidade/estado informados por você.
+          Crie um envelope personalizado com suas fotos, mensagem especial,
+          contador de tempo e sua trilha sonora favorita.
         </p>
       </div>
 
@@ -24,10 +31,11 @@
         <div class="benefit-icon icon-pink">
           <MessageSquare size={40} />
         </div>
-        <h3>Entrega Instantânea</h3>
+        <h3>Acesso Imediato</h3>
         <p>
-          Receba sua certidão digital poucos minutos após a confirmação, direto
-          no seu <strong>WhatsApp</strong>.
+          O QR Code e o link da sua página exclusiva são enviados direto no seu <strong
+            >WhatsApp</strong
+          > e E-mail após a confirmação.
         </p>
       </div>
 
@@ -37,8 +45,8 @@
         </div>
         <h3>Amor com Segurança</h3>
         <p>
-          Pagamento via Pix com processamento criptografado e garantia de
-          entrega imediata.
+          Pagamento via Pix com processamento instantâneo, seguro e com a
+          garantia de entrega da nossa plataforma.
         </p>
       </div>
     </div>
@@ -55,49 +63,52 @@
   .section-title {
     font-family: "Great Vibes", cursive;
     color: #5e0b15;
-    font-size: 3rem;
+    font-size: clamp(2.5rem, 8vw, 3.5rem);
     margin-bottom: 60px;
     position: relative;
+    line-height: 1.1;
   }
 
   .section-title::after {
     content: "❤❤❤";
     display: block;
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: #ff4d6d;
-    margin-top: 10px;
-    letter-spacing: 5px;
+    margin-top: 15px;
+    letter-spacing: 8px;
   }
 
   .benefit-card {
     text-align: center;
     border: 1px solid #feeafa;
-    padding: 40px 30px;
+    padding: 45px 30px;
     background: #ffffff;
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-radius: 25px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
 
   .benefit-card:hover {
     border-color: #ffccd5;
-    transform: translateY(-10px);
-    box-shadow: 0 20px 40px rgba(230, 57, 70, 0.08);
+    transform: translateY(-12px);
+    box-shadow: 0 25px 50px rgba(230, 57, 70, 0.1);
   }
 
   .benefit-icon {
-    margin-bottom: 24px;
-    width: 80px;
-    height: 80px;
+    margin-bottom: 28px;
+    width: 85px;
+    height: 85px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%;
-    transition: transform 0.3s ease;
+    border-radius: 20px;
+    transition: transform 0.5s ease;
   }
 
   .benefit-card:hover .benefit-icon {
-    transform: rotate(10deg) scale(1.1);
+    transform: rotate(12deg) scale(1.1);
   }
 
   .icon-red {
@@ -119,14 +130,14 @@
     font-family: "Poppins", sans-serif;
     color: #4a0e0e;
     font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 16px;
+    font-weight: 700;
+    margin-bottom: 18px;
   }
 
   .benefit-card p {
     color: #8d5b5b;
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.7;
     margin-bottom: 0;
   }
 
@@ -136,12 +147,14 @@
     }
 
     .section-title {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 40px;
+      padding: 0 15px;
     }
 
     .benefit-card {
-      padding: 30px 20px;
+      padding: 35px 20px;
+      margin: 0 10px;
     }
   }
 </style>

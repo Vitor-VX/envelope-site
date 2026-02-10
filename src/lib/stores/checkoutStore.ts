@@ -164,16 +164,16 @@ export const resetCheckout = () => {
 export const products: Product[] = [
   {
     id: '1',
-    name: '1 Envelope Anual',
-    description: '1 envelope por 12 meses.',
+    name: 'Envelope do Amor — 2 Anos',
+    description: '1 envelope digital válido por 2 anos.',
     price: 18.90,
     oldPrice: 29.90,
     quantity: 1
   },
   {
     id: '2',
-    name: '1 Envelope Vitalicio',
-    description: '1 envelope para sempre.',
+    name: 'Envelope do Amor — Vitalício',
+    description: '1 envelope digital para sempre.',
     price: 48.90,
     oldPrice: 97.90,
     quantity: 1

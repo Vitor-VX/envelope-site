@@ -4,22 +4,13 @@
 
   export let onStartCheckout: () => void;
 
-  const carrosel = [
-    "https://files.botsync.site/CertPreview2.png",
-    "https://files.botsync.site/modelos-certificados/certificado_02_com_img.png",
-    "https://files.botsync.site/modelos-certificados/modelo_padrao.jpeg",
-    "https://files.botsync.site/modelos-certificados/certificado_02_sem_img.png",
-  ];
+  const carrosel = ["https://files.botsync.site/envelope/img-site/img_01_envelope.png"];
 
   let current = 0;
   let interval: any;
 
   function next() {
     current = (current + 1) % carrosel.length;
-  }
-
-  function prev() {
-    current = (current - 1 + carrosel.length) % carrosel.length;
   }
 
   onMount(() => {
@@ -76,12 +67,12 @@
       <div class="cta-section">
         <button class="btn btn-primary btn-large" on:click={onStartCheckout}>
           <HandHeart size={20} />
-          Criar Nossa Certidão Agora
+          Criar Nosso Envelope Agora
         </button>
         <div class="price-container">
           <p class="price-info">
-            De <span class="price-old">R$ 29,90</span> por apenas
-            <span class="price">R$ 12,90</span>
+            De <span class="price-old">R$ 39,90</span> por apenas
+            <span class="price">R$ 18,90</span>
           </p>
         </div>
       </div>
@@ -196,9 +187,8 @@
   }
 
   .video-thumbnail img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #fff;
   }
 
   .pulse {
@@ -298,7 +288,7 @@
     height: 100%;
     object-fit: cover;
     opacity: 0;
-    transform: scale(1.05);
+    transform: scale(1);
     transition:
       opacity 0.6s ease,
       transform 0.6s ease;
