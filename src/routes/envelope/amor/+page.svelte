@@ -15,11 +15,11 @@
         title: "Para o Amor da Minha Vida",
         photos: [
             "https://files.botsync.site/envelope/img-site/amor.jpeg",
-            null,
+            "https://files.botsync.site/envelope/img-site/amor_02.jpeg",
             null,
         ],
         message:
-            "Cada momento ao seu lado é um presente precioso que guardo no coração. Você é minha inspiração, minha alegria e meu maior amor. Obrigado por tornar minha vida mais bonita e cheia de significado.",
+            "Cada momento ao seu lado é um presente precioso que guardo com carinho no coração. Desde os instantes mais simples até os mais marcantes, tudo ao seu lado ganha um significado especial. Seu sorriso ilumina meus dias, sua presença me fortalece e seu amor me inspira a ser melhor todos os dias. Você é minha alegria, meu porto seguro e o maior amor da minha vida. Obrigado por caminhar comigo, por compartilhar sonhos, por transformar minha vida em algo mais bonito, mais leve e infinitamente mais especial.",
         showTimer: true,
         timeCounter:
             "3 meses, 2 dias, 17 horas, 44 minutos e 59 segundos",
