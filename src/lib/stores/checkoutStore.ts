@@ -18,15 +18,15 @@ export interface Extra {
 }
 
 export interface PersonData {
-  name1: string;
-  name2: string;
-  name: string;
+  title: string;
+  photos: string[];
+  message: string;
+  musicUrl: string;
+  musicName: string;
+  sender: string;
+  showTimer: boolean;
   startDate: string;
-  cityName: string;
-  stateName: string;
-  city: string;
-  photo?: string;
-  selectedTheme: string;
+  hasMusic: boolean;
 }
 
 export interface CustomerData {
@@ -75,18 +75,18 @@ export const setCurrentStep = (step: number) => {
 export const selectProduct = (product: Product) => {
   checkoutStore.update(state => {
     const people = Array.from({ length: product.quantity }, () => ({
-      name1: '',
-      name2: '',
-      name: '',
+      title: '',
+      photos: [],
+      message: '',
+      musicUrl: '',
+      sender: '',
+      showTimer: false,
       startDate: '',
-      cityName: '',
-      stateName: '',
-      city: '',
-      selectedTheme: ''
+      hasMusic: false,
+      musicName: ''
     }));
 
     const extrasTotal = state.selectedExtras.reduce((sum, extra) => sum + (extra.selected ? extra.price : 0), 0);
-
     return {
       ...state,
       selectedProduct: product,
@@ -95,36 +95,6 @@ export const selectProduct = (product: Product) => {
     };
   });
 };
-
-export const toggleExtra = (extraId: string) => {
-  checkoutStore.update(state => {
-    let updatedExtras = state.selectedExtras.map(extra => {
-      if (extra.id === extraId) {
-        return { ...extra, selected: !extra.selected };
-      }
-
-      if (extraId === 'collection' && extra.id === 'with_photo') {
-        return { ...extra, selected: false };
-      }
-
-      return extra;
-    });
-
-    const extrasTotal = updatedExtras.reduce(
-      (sum, extra) => sum + (extra.selected ? extra.price : 0),
-      0
-    );
-
-    const productPrice = state.selectedProduct?.price || 0;
-
-    return {
-      ...state,
-      selectedExtras: updatedExtras,
-      totalAmount: productPrice + extrasTotal
-    };
-  });
-};
-
 
 export const updatePersonData = (index: number, personData: Partial<PersonData>) => {
   checkoutStore.update(state => ({
@@ -180,29 +150,7 @@ export const products: Product[] = [
   }
 ];
 
-export const extras: Extra[] = [
-  {
-    id: 'fast_delivery',
-    name: 'Entrega super rápida',
-    description: 'Receba em até 10 segundos',
-    price: 4.90,
-    selected: false
-  },
-  {
-    id: 'with_photo',
-    name: 'Certificado do Amor Premium (2 em 1)',
-    description: 'Receba o certificado com foto do casal e também a versão sem foto.',
-    price: 6.90,
-    selected: false
-  },
-  {
-    id: 'collection',
-    name: 'Coleção Completa (Todos os Modelos)',
-    description: 'Receba todos os estilos do certificado: Minimalista e Clássico, com e sem foto. São 4 certificados para você escolher o seu favorito.',
-    price: 14.90,
-    selected: false
-  }
-];
+export const extras: Extra[] = [];
 
 checkoutStore.update(state => ({
   ...state,

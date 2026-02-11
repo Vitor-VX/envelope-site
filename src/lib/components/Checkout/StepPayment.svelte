@@ -14,6 +14,7 @@
   } from "lucide-svelte";
   import {
     checkoutStore,
+    products,
     setPaymentStatus,
     setPixData,
   } from "$lib/stores/checkoutStore";
@@ -67,16 +68,26 @@
     const upsell = selectedExtras
       .filter((el) => el.selected)
       .map((el) => el.id);
-    const certificates = people.map((el) => ({
-      couple: el.name,
-      startDate: el.startDate,
-      city: el.city,
-      photo: el.photo,
-      theme: el.selectedTheme,
-    }));
+
+    const el = people[0];
+    const envelope = {
+      title: el.title,
+      photos: el.photos,
+      message: el.message,
+      signature: el.sender,
+      options: {
+        showCounter: el.showTimer,
+        startDate: el.startDate,
+        hasMusic: el.hasMusic,
+        musicUrl: el.musicUrl,
+        musicName: el.musicName
+      },
+    };
+
+    if (!selectedProduct) return;
 
     const request = await fetch(
-      "https://vxsoftware.space/api/v1/offers/certificate/orders/create",
+      "https://vxsoftware.space/api/v1/offers/envelope/orders/create",
       {
         method: "POST",
         headers: {
@@ -84,9 +95,8 @@
         },
         body: JSON.stringify({
           product: {
-            plan: "single",
-            extras: upsell,
-            certificates,
+            plan: selectedProduct.id === "1" ? "one" : "two",
+            envelope,
           },
           name: customerData.name,
           whatsapp: customerData.whatsapp,
@@ -109,7 +119,7 @@
     if (!token) return;
 
     const res = await fetch(
-      "https://vxsoftware.space/api/v1/offers/certificate/orders/current",
+      "https://vxsoftware.space/api/v1/offers/envelope/orders/current",
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -279,10 +289,6 @@
           <div class="item">
             <span class="label">Item:</span>
             <span class="val">{selectedProduct?.name}</span>
-          </div>
-          <div class="item">
-            <span class="label">Casal:</span>
-            <span class="val">{people[0]?.name || "Personalizado"}</span>
           </div>
         </div>
         <div class="summary-divider"></div>

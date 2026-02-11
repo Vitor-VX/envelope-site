@@ -1,6 +1,6 @@
 <script lang="ts">
   import "../app.css";
-  import icon from "$lib/assets/ic_site.png";
+    import icon from "$lib/assets/ic_site.png";
   import Hero from "$lib/components/Hero.svelte";
   import Benefits from "$lib/components/Benefits.svelte";
   import HowItWorks from "$lib/components/HowItWorks.svelte";

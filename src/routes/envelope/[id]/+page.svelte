@@ -3,40 +3,115 @@
         Sparkles,
         Image as ImageIcon,
         Play,
-        Pause,
         Heart,
         X,
         Music,
     } from "lucide-svelte";
+    import icon from "$lib/assets/ic_site.png";
     import { fade, scale, fly } from "svelte/transition";
-    import { onMount } from "svelte";
+    import { onMount, onDestroy, tick } from "svelte";
+    import { page } from "$app/stores";
+    import { get } from "svelte/store";
 
-    let formData = {
-        title: "Para o Amor da Minha Vida",
-        photos: [
-            "https://imgs.search.brave.com/SEykVtWoeUj3u7z2sCFGflLi3g37umbQCkHOVN3Tg3k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3RpL2ZvdG9z/LWdyYXRpcy90Mi81/OTM0MDc4Ny1mZWxp/ei1jYXNhbC1yZWxh/eGFudGUtanVudG9z/LWVtLXVtYS1zb2Zh/LWRlbnRyby11bWEt/YWNvbGhlZG9yLWlu/dGVyaW9yLWNvbmZp/Z3VyYWNhby1kZW50/cm8tY2Fsb3Jvc28t/c3VhdmUtYmx1c2Fz/LWZvdG8uanBn",
-            null,
-            null,
-        ],
-        message:
-            "Cada momento ao seu lado é um presente precioso que guardo no coração. Você é minha inspiração, minha alegria e meu maior amor. Obrigado por tornar minha vida mais bonita e cheia de significado.",
-        showTimer: true,
-        timeCounter:
-            "3 anos, 1 meses, 8 dias, 17 horas, 44 minutos e 59 segundos",
-        sender: "João",
-        hasMusic: true,
-        musicName: "Nossa Música Especial",
-        artistName: "Jorge & Mateus",
-        musicUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-    };
-
+    let id: string;
+    let formData: any = null;
     let isOpen = false;
     let isOpening = false;
     let isPlaying = false;
     let currentPhotoIndex = 0;
     let player: any;
+    let timeInterval: any;
+    let timeCounter = "";
 
-    $: validPhotos = formData.photos.filter((p) => p !== null);
+    onMount(() => {
+        id = get(page).params.id ?? "";
+        getPage();
+    });
+
+    onDestroy(() => {
+        if (timeInterval) clearInterval(timeInterval);
+        if (player && player.destroy) player.destroy();
+    });
+
+    const getPage = async () => {
+        try {
+            const request = await fetch(
+                `https://vxsoftware.space/api/v1/offers/envelope/slug/${id}`,
+            );
+            const response = await request.json();
+
+            if (response.success) {
+                const data = response.data;
+                formData = {
+                    title: data.title,
+                    message: data.message,
+                    sender: data.signature,
+                    photos: data.photos ?? [],
+                    showTimer: data.options?.showCounter ?? false,
+                    startDate: data.options?.startDate
+                        ? new Date(data.options.startDate)
+                        : null,
+                    hasMusic: data.options?.hasMusic ?? false,
+                    musicUrl: data.options?.musicUrl ?? null,
+                    musicName: data.options?.musicName ?? null,
+                };
+
+                if (formData.showTimer && formData.startDate) {
+                    startTimer();
+                }
+
+                if (formData.hasMusic && formData.musicUrl) {
+                    initYouTube();
+                }
+            }
+        } catch (err) {
+            console.error("Erro ao buscar envelope:", err);
+        }
+    };
+
+    function startTimer() {
+        const update = () => {
+            const now = new Date().getTime();
+            const start = formData.startDate.getTime();
+            const diff = now - start;
+
+            const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365.25));
+            const months = Math.floor(
+                (diff % (1000 * 60 * 60 * 24 * 365.25)) /
+                    (1000 * 60 * 60 * 24 * 30.44),
+            );
+            const days = Math.floor(
+                (diff % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24),
+            );
+            const hours = Math.floor(
+                (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+            );
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timeCounter = `${years} anos, ${months} meses, ${days} dias, ${hours} horas, ${minutes} min e ${seconds} seg`;
+        };
+        update();
+        timeInterval = setInterval(update, 1000);
+    }
+
+    function initYouTubePlayer() {
+        const videoId = getYoutubeId(formData.musicUrl);
+        if (!videoId) return;
+
+        player = new (window as any).YT.Player("youtube-player", {
+            height: "0",
+            width: "0",
+            videoId: videoId,
+            playerVars: { autoplay: 0, controls: 0 },
+            events: {
+                onStateChange: (e: any) => {
+                    isPlaying =
+                        e.data === (window as any).YT.PlayerState.PLAYING;
+                },
+            },
+        });
+    }
 
     function getYoutubeId(url: string) {
         const regExp =
@@ -45,33 +120,65 @@
         return match && match[2].length === 11 ? match[2] : null;
     }
 
-    function initYouTubePlayer() {
-        if ((window as any).YT && (window as any).YT.Player) {
-            player = new (window as any).YT.Player("youtube-player", {
-                height: "0",
-                width: "0",
-                videoId: getYoutubeId(formData.musicUrl),
-                playerVars: {
-                    autoplay: 1,
-                    controls: 0,
-                    disablekb: 1,
-                    fs: 0,
-                    rel: 0,
-                    modestbranding: 1,
-                },
-                events: {
-                    onStateChange: (event: any) => {
-                        isPlaying =
-                            event.data ===
-                            (window as any).YT.PlayerState.PLAYING;
-                    },
-                },
-            });
-        }
+    function toggleMusic() {
+        if (!player) return;
+        isPlaying ? player.pauseVideo() : player.playVideo();
     }
 
+    function handleOpen() {
+        isOpening = true;
+        setTimeout(() => {
+            isOpen = true;
+            if (formData.hasMusic && player) player.playVideo();
+        }, 1200);
+    }
+
+    async function initYouTube() {
+        if (!formData?.hasMusic || !formData?.musicUrl) return;
+
+        await tick();
+
+        if (!(window as any).YT) {
+            await loadScript();
+        }
+
+        createPlayer();
+    }
+
+    function loadScript() {
+        return new Promise<void>((resolve) => {
+            const tag = document.createElement("script");
+            tag.src = "https://www.youtube.com/iframe_api";
+            document.head.appendChild(tag);
+
+            (window as any).onYouTubeIframeAPIReady = () => {
+                resolve();
+            };
+        });
+    }
+
+    function createPlayer() {
+        const videoId = getYoutubeId(formData.musicUrl);
+        if (!videoId) return;
+
+        player = new (window as any).YT.Player("youtube-player", {
+            height: "0",
+            width: "0",
+            videoId,
+            playerVars: { autoplay: 0, controls: 0 },
+            events: {
+                onStateChange: (e: any) => {
+                    isPlaying =
+                        e.data === (window as any).YT.PlayerState.PLAYING;
+                },
+            },
+        });
+    }
+
+    $: validPhotos = formData?.photos?.filter((p: string) => !!p) ?? [];
+
     onMount(() => {
-        const interval = setInterval(() => {
+        const photoInterval = setInterval(() => {
             if (validPhotos.length > 1) {
                 currentPhotoIndex =
                     (currentPhotoIndex + 1) % validPhotos.length;
@@ -87,210 +194,187 @@
             initYouTubePlayer();
         }
 
-        return () => {
-            clearInterval(interval);
-            if (player && player.destroy) player.destroy();
-        };
+        return () => clearInterval(photoInterval);
     });
-
-    function toggleMusic() {
-        if (!player || typeof player.getPlayerState !== "function") return;
-        if (isPlaying) {
-            player.pauseVideo();
-        } else {
-            player.playVideo();
-        }
-    }
-
-    function handleOpen() {
-        isOpening = true;
-        setTimeout(() => {
-            isOpen = true;
-            if (
-                formData.hasMusic &&
-                player &&
-                typeof player.playVideo === "function"
-            ) {
-                player.playVideo();
-            }
-        }, 1200);
-    }
 </script>
 
-{#if formData.hasMusic}
-    <div
-        id="youtube-player"
-        style="position: absolute; width: 0; height: 0; pointer-events: none; visibility: hidden;"
-    ></div>
-{/if}
+<svelte:head>
+    <link rel="icon" href={icon} />
+</svelte:head>
 
-<div class="floating-hearts">
-    {#each Array(20) as _, i}
+{#if formData}
+    {#if formData.hasMusic}
         <div
-            class="heart-particle"
-            style="left: {Math.random() *
-                100}%; animation-delay: {Math.random() * 10}s;"
-        >
-            <Heart
-                fill="#ffb5a7"
-                color="#ffb5a7"
-                size={12 + Math.random() * 20}
-            />
-        </div>
-    {/each}
-</div>
+            id="youtube-player"
+            style="position: absolute; visibility: hidden;"
+        ></div>
+    {/if}
 
-<main class="letter-viewer">
-    {#if !isOpen}
-        <div
-            class="envelope-container"
-            class:opening={isOpening}
-            on:click={handleOpen}
-            out:fade
-        >
-            <div class="envelope">
-                <div class="flap"></div>
-                <div class="pocket"></div>
-                <div class="letter-inside">
-                    <div class="letter-text">
-                        <Heart size={24} fill="#db2777" color="#db2777" />
-                        <p>Uma mensagem especial...</p>
-                    </div>
-                </div>
-                <div class="seal">
-                    <Heart fill="#db2777" color="#db2777" size={40} />
-                </div>
-                <div class="envelope-label">
-                    <p>Para: {formData.title}</p>
-                </div>
+    <div class="floating-hearts">
+        {#each Array(15) as _}
+            <div
+                class="heart-particle"
+                style="left: {Math.random() *
+                    100}%; animation-delay: {Math.random() * 10}s;"
+            >
+                <Heart
+                    fill="#ffb5a7"
+                    color="#ffb5a7"
+                    size={12 + Math.random() * 20}
+                />
             </div>
-            {#if !isOpening}
-                <div class="click-hint" in:fade>
-                    <Sparkles size={16} /> Toque para abrir
-                </div>
-            {/if}
-        </div>
-    {:else}
-        <div class="notebook-section" in:fly={{ y: 50, duration: 1000 }}>
-            <div class="notebook-case">
-                <div class="notebook-page">
-                    <div class="page-lines"></div>
-                    <div class="page-margin-red"></div>
-                    <div class="page-spiral">
-                        {#each Array(14) as _}<div
-                                class="spiral-hole"
-                            ></div>{/each}
+        {/each}
+    </div>
+
+    <main class="letter-viewer">
+        {#if !isOpen}
+            <div
+                class="envelope-container"
+                class:opening={isOpening}
+                on:click={handleOpen}
+                out:fade
+            >
+                <div class="envelope">
+                    <div class="flap"></div>
+                    <div class="pocket"></div>
+                    <div class="letter-inside">
+                        <div class="letter-text">
+                            <Heart size={24} fill="#db2777" color="#db2777" />
+                            <p>Uma mensagem especial...</p>
+                        </div>
                     </div>
+                    <div class="seal">
+                        <Heart fill="#db2777" color="#db2777" size={40} />
+                    </div>
+                    <div class="envelope-label">
+                        <p>Para: {formData.title}</p>
+                    </div>
+                </div>
+                {#if !isOpening}
+                    <div class="click-hint" in:fade>
+                        <Sparkles size={16} /> Toque para abrir
+                    </div>
+                {/if}
+            </div>
+        {:else}
+            <div class="notebook-section" in:fly={{ y: 50, duration: 1000 }}>
+                <div class="notebook-case">
+                    <div class="notebook-page">
+                        <div class="page-lines"></div>
+                        <div class="page-margin-red"></div>
+                        <div class="page-spiral">
+                            {#each Array(14) as _}<div
+                                    class="spiral-hole"
+                                ></div>{/each}
+                        </div>
 
-                    <div class="notebook-content">
-                        <h1 class="notebook-title">{formData.title}</h1>
+                        <div class="notebook-content">
+                            <h1 class="notebook-title">{formData.title}</h1>
 
-                        <div class="photo-area">
-                            <div class="tape tape-tl"></div>
-                            <div class="photo-frame">
-                                {#if validPhotos.length > 0}
-                                    {#each [validPhotos[currentPhotoIndex]] as src (currentPhotoIndex)}
-                                        <img
-                                            {src}
-                                            alt="Foto"
-                                            in:fade={{ duration: 600 }}
-                                        />
-                                    {/each}
-                                    {#if validPhotos.length > 1}
-                                        <div class="carousel-indicators">
-                                            {#each validPhotos as _, i}
-                                                <div
-                                                    class="dot"
-                                                    class:active={i ===
-                                                        currentPhotoIndex}
-                                                ></div>
-                                            {/each}
+                            <div class="photo-area">
+                                <div class="tape tape-tl"></div>
+                                <div class="photo-frame">
+                                    {#if validPhotos.length > 0}
+                                        {#each [validPhotos[currentPhotoIndex]] as src (currentPhotoIndex)}
+                                            <img
+                                                {src}
+                                                alt="Foto"
+                                                in:fade={{ duration: 600 }}
+                                            />
+                                        {/each}
+                                        {#if validPhotos.length > 1}
+                                            <div class="carousel-indicators">
+                                                {#each validPhotos as _, i}
+                                                    <div
+                                                        class="dot"
+                                                        class:active={i ===
+                                                            currentPhotoIndex}
+                                                    ></div>
+                                                {/each}
+                                            </div>
+                                        {/if}
+                                    {:else}
+                                        <div class="photo-placeholder">
+                                            <ImageIcon size={40} />
                                         </div>
                                     {/if}
-                                {:else}
-                                    <div class="photo-placeholder">
-                                        <ImageIcon size={40} />
-                                    </div>
-                                {/if}
+                                </div>
+                                <div class="tape tape-br"></div>
                             </div>
-                            <div class="tape tape-br"></div>
+
+                            <p class="notebook-message">{formData.message}</p>
+
+                            {#if formData.showTimer}
+                                <div class="timer-box">
+                                    <span class="timer-label">Juntos há:</span>
+                                    <div class="timer-text">{timeCounter}</div>
+                                </div>
+                            {/if}
+
+                            <div class="signature">
+                                <span>Assinado:</span>
+                                <span class="signature-name"
+                                    >{formData.sender}</span
+                                >
+                            </div>
+
+                            {#if formData.hasMusic}
+                                <div
+                                    class="instagram-player"
+                                    on:click={toggleMusic}
+                                >
+                                    <div class="player-left">
+                                        <div class="album-art">
+                                            <img
+                                                src="https://files.botsync.site/modelos-certificados/modelo_padrao.jpeg"
+                                                alt="Capa"
+                                            />
+                                            <div class="player-icon-overlay">
+                                                {#if isPlaying}
+                                                    <div class="sound-bars">
+                                                        <span></span><span
+                                                        ></span><span></span>
+                                                    </div>
+                                                {:else}
+                                                    <Play
+                                                        size={14}
+                                                        fill="white"
+                                                        color="white"
+                                                    />
+                                                {/if}
+                                            </div>
+                                        </div>
+                                        <div class="song-info">
+                                            <div class="song-name">
+                                                {formData.musicName}
+                                            </div>
+                                            <div class="song-meta">
+                                                {formData.sender} • Love Mix
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="player-right">
+                                        <Music size={18} />
+                                    </div>
+                                </div>
+                            {/if}
                         </div>
-
-                        <p class="notebook-message">{formData.message}</p>
-
-                        {#if formData.showTimer}
-                            <div class="timer-box">
-                                <span class="timer-label">Juntos há:</span>
-                                <div class="timer-text">
-                                    {formData.timeCounter}
-                                </div>
-                            </div>
-                        {/if}
-
-                        <div class="signature">
-                            <span>Assinado:</span>
-                            <span class="signature-name">{formData.sender}</span
-                            >
-                        </div>
-
-                        {#if formData.hasMusic}
-                            <div
-                                class="instagram-player"
-                                on:click={toggleMusic}
-                            >
-                                <div class="player-left">
-                                    <div class="album-art">
-                                        <img
-                                            src="https://files.botsync.site/modelos-certificados/modelo_padrao.jpeg"
-                                            alt="Capa"
-                                        />
-                                        <div class="player-icon-overlay">
-                                            {#if isPlaying}
-                                                <div class="sound-bars">
-                                                    <span></span><span
-                                                    ></span><span></span>
-                                                </div>
-                                            {:else}
-                                                <Play
-                                                    size={14}
-                                                    fill="white"
-                                                    color="white"
-                                                />
-                                            {/if}
-                                        </div>
-                                    </div>
-                                    <div class="song-info">
-                                        <div class="song-name">
-                                            {formData.musicName}
-                                        </div>
-                                        <div class="song-meta">
-                                            {formData.artistName} • 3:00
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="player-right">
-                                    <Music size={18} />
-                                </div>
-                            </div>
-                        {/if}
                     </div>
                 </div>
+                <button
+                    class="btn-close"
+                    on:click={() => {
+                        isOpen = false;
+                        isOpening = false;
+                        player?.pauseVideo();
+                    }}
+                >
+                    <X size={18} /> Fechar
+                </button>
             </div>
-
-            <button
-                class="btn-close"
-                on:click={() => {
-                    isOpen = false;
-                    isOpening = false;
-                    isPlaying = false;
-                    player?.pauseVideo();
-                }}
-            >
-                <X size={18} /> Fechar Presente
-            </button>
-        </div>
-    {/if}
-</main>
+        {/if}
+    </main>
+{/if}
 
 <style>
     @import url("https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@300;400;600&display=swap");

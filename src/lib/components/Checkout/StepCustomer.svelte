@@ -17,6 +17,7 @@
     Send,
     Lock,
     ChevronRight,
+    Plane,
   } from "lucide-svelte";
   import {
     checkoutStore,
@@ -251,6 +252,16 @@
             </label>
 
             {#if people[0]?.hasMusic}
+              <div class="conditional-input" transition:slide>
+                <label><Music size={16} /> Como é o nome da sua Música</label>
+                <input
+                  type="text"
+                  placeholder="Nossa Música"
+                  value={people[0]?.musicName || ""}
+                  on:input={(e) =>
+                    handleDataUpdate("musicName", e.currentTarget.value)}
+                />
+              </div>
               <div class="conditional-input" transition:slide>
                 <label><Youtube size={16} /> Link da música no YouTube</label>
                 <input

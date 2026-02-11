@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { checkoutStore, toggleExtra } from "$lib/stores/checkoutStore";
+  import { checkoutStore } from "$lib/stores/checkoutStore";
 
   export let onNext: () => void;
 
@@ -50,7 +50,7 @@
             type="checkbox"
             checked={includedInCollection || extra.selected}
             disabled={includedInCollection}
-            on:change={() => toggleExtra(extra.id)}
+            on:change={() => {}}
           />
 
           <span class="checkmark"></span>
