@@ -627,17 +627,20 @@
         max-width: 260px;
         margin: 1rem auto 2rem;
     }
+
     .photo-frame {
-        background: white;
+        background: rgb(228, 225, 225);
         padding: 5px;
-        border: 1px solid #f0f0f0;
+        padding-bottom: 3px;
+        padding-top: 3px;
+        border: 3px solid #f0f0f0;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     }
     .photo-frame img {
         width: 100%;
-        aspect-ratio: 1;
-        object-fit: cover;
+        object-fit: contain;
         display: block;
+        max-height: 400px;
     }
 
     .carousel-indicators {
@@ -818,6 +821,10 @@
         margin-top: 10px;
         box-shadow: 0 8px 15px rgba(219, 39, 119, 0.2);
         font-size: 0.9rem;
+        display: flex;
+        justify-content: center;
+        gap: 5px;
+        align-items: center;
     }
 
     @keyframes pulse {
