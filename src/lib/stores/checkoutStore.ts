@@ -144,8 +144,8 @@ export const products: Product[] = [
     id: '2',
     name: 'Envelope do Amor — Vitalício',
     description: '1 envelope digital para sempre.',
-    price: 48.90,
-    oldPrice: 97.90,
+    price: 29.90,
+    oldPrice: 48.90,
     quantity: 1
   }
 ];
