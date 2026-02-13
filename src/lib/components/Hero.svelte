@@ -4,7 +4,7 @@
 
   export let onStartCheckout: () => void;
 
-  const carrosel = ["https://files.botsync.site/envelope/img-site/img_01_envelope.png"];
+  const carrosel = ["https://files.botsync.site/envelope/img-site/img_01.png"];
 
   let current = 0;
   let interval: any;

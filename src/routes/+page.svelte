@@ -1,6 +1,6 @@
 <script lang="ts">
   import "../app.css";
-    import icon from "$lib/assets/ic_site.png";
+  import icon from "$lib/assets/ic_site.png";
   import Hero from "$lib/components/Hero.svelte";
   import Benefits from "$lib/components/Benefits.svelte";
   import HowItWorks from "$lib/components/HowItWorks.svelte";
@@ -54,7 +54,7 @@
   />
   <link rel="icon" href={icon} />
 
-  <!-- <script>
+  <script>
     !(function (f, b, e, v, n, t, s) {
       if (f.fbq) return;
       n = f.fbq = function () {
@@ -78,7 +78,7 @@
       "script",
       "https://connect.facebook.net/en_US/fbevents.js",
     );
-    fbq("init", "875484495259675");
+    fbq("init", "1792257344784833");
     fbq("track", "PageView");
   </script>
 
@@ -87,7 +87,7 @@
       height="1"
       width="1"
       style="display:none"
-      src="https://www.facebook.com/tr?id=875484495259675&ev=PageView&noscript=1"
+      src="https://www.facebook.com/tr?id=1792257344784833&ev=PageView&noscript=1"
     />
   </noscript>
 
@@ -105,6 +105,10 @@
   >
   </script>
 
+  <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-HBBF4PHM1F"
+  ></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() {
@@ -112,8 +116,8 @@
     }
     gtag("js", new Date());
 
-    gtag("config", "G-SHQ596VRV3");
-  </script> -->
+    gtag("config", "G-HBBF4PHM1F");
+  </script>
 </svelte:head>
 
 {#if !showCheckout}
