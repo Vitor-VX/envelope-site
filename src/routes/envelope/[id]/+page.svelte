@@ -275,22 +275,22 @@
                                 <div class="tape tape-tl"></div>
                                 <div class="photo-frame">
                                     {#if validPhotos.length > 0}
-                                        {#each [validPhotos[currentPhotoIndex]] as src (currentPhotoIndex)}
-                                            <img
-                                                {src}
-                                                alt="Foto"
-                                                in:fade={{ duration: 600 }}
-                                            />
-                                        {/each}
+                                        <div class="image-wrapper">
+                                            {#each [validPhotos[currentPhotoIndex]] as src (currentPhotoIndex)}
+                                                <img
+                                                    {src}
+                                                    alt="Foto"
+                                                    in:fade={{ duration: 600 }}
+                                                />
+                                            {/each}
+                                        </div>
                                         {#if validPhotos.length > 1}
                                             <div class="carousel-indicators">
-                                                {#each validPhotos as _, i}
-                                                    <div
+                                                {#each validPhotos as _, i}<div
                                                         class="dot"
                                                         class:active={i ===
                                                             currentPhotoIndex}
-                                                    ></div>
-                                                {/each}
+                                                    ></div>{/each}
                                             </div>
                                         {/if}
                                     {:else}
@@ -624,23 +624,46 @@
     .photo-area {
         position: relative;
         width: 100%;
-        max-width: 260px;
+        max-width: 280px;
         margin: 1rem auto 2rem;
     }
-
     .photo-frame {
-        background: rgb(228, 225, 225);
-        padding: 5px;
-        padding-bottom: 3px;
-        padding-top: 3px;
-        border: 3px solid #f0f0f0;
+        background: #fff;
+        padding: 8px;
+        border: 1px solid #f0f0f0;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        height: 360px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+    .image-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .photo-frame img {
         width: 100%;
-        object-fit: contain;
+        height: 100%;
+        object-fit: cover;
         display: block;
-        max-height: 400px;
+        border-radius: 4px;
+    }
+    .photo-placeholder {
+        height: 100%;
+        width: 100%;
+        background: #f9fafb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ddd;
+        border: 1px dashed #eee;
     }
 
     .carousel-indicators {
