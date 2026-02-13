@@ -153,7 +153,7 @@
               ? "Preparando tudo..."
               : "Quase lá, falta pouco!"}
           </h2>
-          <p>Realize o pagamento para liberarmos sua certidão personalizada.</p>
+          <p>Realize o pagamento para liberarmos seu envelope personalizado.</p>
         </div>
       {/if}
 
@@ -235,7 +235,7 @@
                 <div class="step-text">
                   <strong>Confira seu WhatsApp</strong>
                   <span
-                    >Enviamos sua certidão agora mesmo para o número <b
+                    >Enviamos seu envelope agora mesmo para o número <b
                       >{customerData.whatsapp}</b
                     >.</span
                   >
@@ -247,7 +247,7 @@
                   <strong>Entrega alternativa por e-mail</strong>
                   <span>
                     Caso haja qualquer dificuldade na entrega via WhatsApp,
-                    entraremos em contato e enviaremos o certificado para o
+                    entraremos em contato e enviaremos seu envelope para o
                     e-mail
                     <b>{customerData.email}</b>.
                   </span>

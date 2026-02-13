@@ -326,7 +326,7 @@
                                     <div class="player-left">
                                         <div class="album-art">
                                             <img
-                                                src="https://files.botsync.site/modelos-certificados/modelo_padrao.jpeg"
+                                                src="https://files.botsync.site/envelope/img-site/img_01_envelope.png"
                                                 alt="Capa"
                                             />
                                             <div class="player-icon-overlay">

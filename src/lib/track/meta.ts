@@ -21,7 +21,7 @@ export function track(event: MetaEvent, data: any = {}) {
     };
 
     (window as any).fbq("track", map[event], {
-        content_name: "Certificado do Amor",
+        content_name: "Envelope do Amor",
         currency: "BRL",
         ...data,
     });
