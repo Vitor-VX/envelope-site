@@ -95,6 +95,8 @@
       whatsapp: onlyNumbers(customerData.whatsapp),
     });
     onNext();
+    
+    track("initiate_checkout", { value: totalAmount });
   }
 </script>
 

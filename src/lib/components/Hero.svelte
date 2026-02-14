@@ -71,7 +71,7 @@
         </button>
         <div class="price-container">
           <p class="price-info">
-            De <span class="price-old">R$ 39,90</span> por apenas
+            De <span class="price-old">R$ 29,90</span> por apenas
             <span class="price">R$ 18,90</span>
           </p>
         </div>
