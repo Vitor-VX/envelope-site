@@ -89,13 +89,33 @@
       return;
     }
 
+    if (p.hasMusic) {
+      if (!p.musicUrl || p.musicUrl.trim() === "") {
+        alert("Por favor, informe uma URL do YouTube.");
+        return;
+      }
+
+      if (!p.musicUrl.startsWith("https://")) {
+        alert("Por favor, informe uma URL válida do YouTube.");
+        return;
+      }
+
+      if (
+        !p.musicUrl.includes("youtube.com") &&
+        !p.musicUrl.includes("youtu.be")
+      ) {
+        alert("A URL deve ser do YouTube.");
+        return;
+      }
+    }
+
     track("initiate_checkout", { value: totalAmount });
     updateCustomerData({
       ...customerData,
       whatsapp: onlyNumbers(customerData.whatsapp),
     });
     onNext();
-    
+
     track("initiate_checkout", { value: totalAmount });
   }
 </script>
@@ -166,7 +186,6 @@
           </div>
         </div>
 
-        <!-- MENSAGEM -->
         <div class="glass-card person-form">
           <h3 class="romantic-title"><Type size={22} /> Mensagem Romântica</h3>
 
