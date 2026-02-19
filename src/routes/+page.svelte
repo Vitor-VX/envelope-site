@@ -122,12 +122,11 @@
 
 {#if !showCheckout}
   <Hero onStartCheckout={startCheckout} />
-  <!-- <SocialProof /> -->
+  <SocialProof />
   <!-- <Templates /> -->
   <Benefits />
   <HowItWorks onStartCheckout={startCheckout} />
 {:else}
-  <!-- Checkout Flow -->
   <div class="checkout-container">
     <div class="checkout-header">
       <div class="container">

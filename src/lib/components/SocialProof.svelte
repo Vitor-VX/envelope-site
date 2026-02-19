@@ -10,25 +10,20 @@
 
   const reviews = [
     {
-      img: "https://files.botsync.site/casais/img_04.jpeg",
-      couple: "Luan & Grazi",
+      img: "https://files.botsync.site/envelope/img-site/img_01.PNG",
+      couple: "Julia & Soares",
       tag: "Eternizado",
     },
     {
-      img: "https://files.botsync.site/casais/img_01.jpg",
-      couple: "Fernanda & Samuel",
+      img: "https://files.botsync.site/envelope/img-site/img_02.PNG",
+      couple: "Manuele & Wesley",
       tag: "Presente Surpresa",
     },
     {
-      img: "https://files.botsync.site/casais/img_03.jpeg",
-      couple: "Gustavo & Ana",
+      img: "https://files.botsync.site/envelope/img-site/img_03.PNG",
+      couple: "Sophia & Fernando",
       tag: "Presente Surpresa",
-    },
-    {
-      img: "https://files.botsync.site/casais/img_05.jpeg",
-      couple: "Tati & Lucas",
-      tag: "Pedido de Namoro",
-    },
+    }
   ];
 
   let scrollContainer: HTMLDivElement;
@@ -51,7 +46,7 @@
       </div>
       <h2 class="section-title">Quem já viveu esse amor</h2>
       <p class="subtitle">
-        Veja como ficaram os certificados de alguns de nossos casais apaixonados
+        Veja como ficaram os <strong>envelopes</strong> de alguns de nossos casais apaixonados
       </p>
     </div>
 
@@ -64,7 +59,7 @@
         {#each reviews as review}
           <div class="proof-card">
             <div class="image-container">
-              <img src={review.img} alt="Certificado do casal" />
+              <img src={review.img} alt="Envelope do casal" />
               <div class="overlay">
                 <!-- <span class="tag">{review.tag}</span> -->
               </div>
@@ -80,7 +75,7 @@
               <h3>{review.couple}</h3>
               <div class="verified">
                 <CheckCircle2 size={14} />
-                <span>Certificado Enviado</span>
+                <span>Envelope Enviado</span>
               </div>
             </div>
           </div>

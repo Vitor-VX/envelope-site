@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { HandHeart, Heart, Play, Eye, Sparkles, X } from "lucide-svelte";
+  import { HandHeart, Heart, Play, Sparkles, X } from "lucide-svelte";
   import { onMount } from "svelte";
   import { fade, fly } from "svelte/transition";
 
